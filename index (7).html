@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cognivex Labs — AI Agents That Work While You Sleep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#090c10;--surface:#0f1318;--surface2:#161c24;--border:rgba(255,255,255,0.07);--accent:#00e5a0;--accent2:#0088ff;--accent3:#ff6b35;--text:#f0f2f5;--muted:#7a8694;--card:#111820}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Syne',sans-serif;font-weight:700;line-height:1.15}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:16px 5%;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(20px);background:rgba(9,12,16,0.9);border-bottom:1px solid var(--border)}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--text)}.logo span{color:var(--accent)}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}.nav-links a:hover{color:var(--text)}
+.nav-cta{background:var(--accent);color:#000;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:700;font-size:13px;font-family:'Syne',sans-serif;transition:opacity .2s;white-space:nowrap}.nav-cta:hover{opacity:.85}
+
+.sticky-cta{position:fixed;bottom:0;left:0;right:0;z-index:300;background:var(--accent);padding:14px 20px;text-align:center;display:none}
+.sticky-cta a{color:#000;font-weight:700;font-size:15px;font-family:'Syne',sans-serif;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px}
+
+.hero{min-height:100vh;display:flex;align-items:center;padding:100px 5% 60px;position:relative;overflow:hidden}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,229,160,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,160,0.04) 1px,transparent 1px);background-size:60px 60px;pointer-events:none}
+.hero-glow{position:absolute;top:-200px;left:-200px;width:700px;height:700px;background:radial-gradient(circle,rgba(0,229,160,0.08) 0%,transparent 70%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-100px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(0,136,255,0.07) 0%,transparent 70%);pointer-events:none}
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;max-width:1200px;margin:0 auto;width:100%;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.25);color:var(--accent);padding:6px 16px;border-radius:100px;font-size:13px;font-weight:500;margin-bottom:24px;animation:fadeUp .6s ease both}
+.hero-badge .dot{width:7px;height:7px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-size:clamp(34px,4.5vw,62px);font-weight:800;letter-spacing:-2px;margin-bottom:20px;animation:fadeUp .7s .1s ease both}
+.hero h1 .hl{color:var(--accent)}
+.hero-sub{font-size:17px;color:var(--muted);margin-bottom:36px;font-weight:400;animation:fadeUp .7s .2s ease both;line-height:1.65}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:36px;animation:fadeUp .7s .3s ease both}
+.btn-primary{background:var(--accent);color:#000;padding:15px 26px;border-radius:10px;font-weight:700;font-size:15px;font-family:'Syne',sans-serif;text-decoration:none;transition:all .25s;display:inline-flex;align-items:center;gap:8px;min-height:48px;justify-content:center}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,229,160,0.3)}
+.btn-secondary{background:transparent;color:var(--text);padding:15px 26px;border-radius:10px;font-weight:600;font-size:15px;font-family:'Syne',sans-serif;text-decoration:none;border:1px solid var(--border);transition:all .25s;display:inline-flex;align-items:center;gap:8px;min-height:48px;justify-content:center}
+.btn-secondary:hover{border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.04)}
+.trust-line{display:flex;align-items:center;gap:20px;flex-wrap:wrap;animation:fadeUp .7s .4s ease both}
+.trust-pill{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:13px}
+.chk{width:16px;height:16px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.chk svg{width:9px;height:9px}
+.hero-visual{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;animation:fadeUp .8s .2s ease both}
+.hv-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--accent);margin-bottom:16px;letter-spacing:1.5px;text-transform:uppercase}
+.metric-row{display:flex;gap:12px;margin-bottom:12px}
+.metric{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;flex:1;text-align:center}
+.metric-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--accent)}
+.metric-lbl{font-size:11px;color:var(--muted);margin-top:4px}
+.activity{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+.act-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;font-size:13px}
+.act-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.act-dot.g{background:var(--accent)}.act-dot.b{background:var(--accent2)}.act-dot.o{background:var(--accent3)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.stats{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:32px 5%}
+.stats-inner{display:flex;justify-content:space-around;flex-wrap:wrap;gap:20px;max-width:1100px;margin:0 auto}
+.stat{text-align:center}
+.stat-num{font-family:'Syne',sans-serif;font-size:38px;font-weight:800;color:var(--accent);line-height:1}
+.stat-label{font-size:13px;color:var(--muted);margin-top:6px}
+
+section{padding:80px 5%}
+.section-label{font-size:11px;font-weight:700;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:12px;font-family:'Syne',sans-serif}
+.section-title{font-size:clamp(28px,4vw,48px);margin-bottom:14px;letter-spacing:-1.5px}
+.section-sub{color:var(--muted);font-size:16px;max-width:540px;margin-bottom:48px}
+
+.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;max-width:1200px;margin:0 auto}
+.bc{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:30px;transition:all .3s;position:relative;overflow:hidden}
+.bc:hover{border-color:rgba(0,229,160,0.25);transform:translateY(-3px)}
+.bc::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at top left,rgba(0,229,160,0.04),transparent 60%);opacity:0;transition:opacity .3s}
+.bc:hover::before{opacity:1}
+.bc:nth-child(1){grid-column:span 7}.bc:nth-child(2){grid-column:span 5}.bc:nth-child(3){grid-column:span 5}.bc:nth-child(4){grid-column:span 7}
+.card-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px}
+.ci-g{background:rgba(0,229,160,0.12)}.ci-b{background:rgba(0,136,255,0.12)}.ci-o{background:rgba(255,107,53,0.12)}.ci-p{background:rgba(120,80,255,0.12)}
+.card-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;font-family:'Syne',sans-serif}
+.bc h3{font-size:20px;margin-bottom:8px;letter-spacing:-0.5px}
+.bc p{color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:18px}
+.card-link{display:inline-flex;align-items:center;gap:6px;color:var(--accent);font-size:13px;font-weight:700;text-decoration:none;font-family:'Syne',sans-serif;transition:gap .2s}.card-link:hover{gap:10px}
+.card-out{background:rgba(0,229,160,0.07);border:1px solid rgba(0,229,160,0.15);border-radius:8px;padding:9px 12px;font-size:12px;color:var(--accent);display:inline-flex;align-items:center;gap:6px;margin-bottom:14px}
+
+
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:2px;max-width:1100px;margin:0 auto;background:var(--border);border-radius:18px;overflow:hidden}
+.step{background:var(--card);padding:36px 28px;position:relative}
+.step-num{font-family:'Syne',sans-serif;font-size:56px;font-weight:800;color:rgba(0,229,160,0.07);line-height:1;position:absolute;top:20px;right:20px}
+.step-icon{width:44px;height:44px;border-radius:12px;background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.2);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:16px}
+.step h3{font-size:17px;margin-bottom:8px}.step p{font-size:14px;color:var(--muted);line-height:1.6}
+
+.roi-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;max-width:1100px;margin:0 auto 40px}
+.roi-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px;transition:border .3s}
+.roi-card:hover{border-color:rgba(0,229,160,0.2)}
+.roi-icon{font-size:26px;margin-bottom:12px}
+.roi-card h3{font-size:16px;margin-bottom:8px}
+.roi-card p{font-size:14px;color:var(--muted);line-height:1.6}
+.roi-quote{max-width:580px;margin:0 auto;text-align:center;background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.15);border-radius:14px;padding:24px;font-size:17px;color:var(--text);font-style:italic}
+
+.cases-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:18px;max-width:1100px;margin:0 auto 20px}
+.case-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:26px;transition:border .3s}
+.case-card:hover{border-color:rgba(0,229,160,0.2)}
+.case-num{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.case-tag{display:inline-block;background:rgba(0,229,160,0.1);color:var(--accent);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 12px;border-radius:100px;margin-bottom:12px;font-family:'Syne',sans-serif}
+.case-card h3{font-size:17px;margin-bottom:10px;letter-spacing:-0.3px}
+.case-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;font-family:'Syne',sans-serif;margin-bottom:4px}
+.case-label.prob{color:var(--accent3)}.case-label.sol{color:var(--accent)}
+.case-txt{font-size:13px;color:var(--muted);margin-bottom:10px;line-height:1.6}
+.case-results{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:14px;margin:12px 0;display:flex;flex-direction:column;gap:6px}
+.ri{display:flex;align-items:center;gap:8px;font-size:13px}
+.rdot{width:6px;height:6px;background:var(--accent);border-radius:50%;flex-shrink:0}
+.case-outcome{font-size:13px;color:var(--muted);font-style:italic;border-left:2px solid var(--accent);padding-left:12px;margin-top:12px;margin-bottom:14px}
+.demo-ph{background:rgba(0,229,160,0.04);border:1px dashed rgba(0,229,160,0.2);border-radius:10px;padding:14px;text-align:center;font-size:12px;color:var(--muted);margin:10px 0}
+.demo-ph span{color:var(--accent);font-weight:600}
+.vd-btn{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--border);color:var(--text);padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;font-family:'Syne',sans-serif;cursor:pointer;transition:all .2s;text-decoration:none}
+.vd-btn:hover{border-color:rgba(0,229,160,0.4);color:var(--accent)}
+.cases-note{max-width:1100px;margin:0 auto;text-align:center;font-size:14px;color:var(--muted);font-style:italic;padding:16px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+
+.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;max-width:1100px;margin:0 auto}
+.why-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px;transition:border .3s}
+.why-card:hover{border-color:rgba(0,229,160,0.2)}
+.why-icon{font-size:26px;margin-bottom:12px}
+.why-card h3{font-size:17px;margin-bottom:8px}.why-card p{font-size:14px;color:var(--muted)}
+
+.faq-list{max-width:740px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.faq-item{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.faq-q{padding:18px 22px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:'Syne',sans-serif;font-weight:600;font-size:15px;gap:16px;transition:color .2s}.faq-q:hover{color:var(--accent)}
+.faq-arrow{width:24px;height:24px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .3s,border .2s}
+.faq-item.open .faq-arrow{transform:rotate(180deg);border-color:rgba(0,229,160,0.4)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s}
+.faq-item.open .faq-a{max-height:200px;padding:0 22px 18px}
+.faq-a p{color:var(--muted);font-size:15px;line-height:1.7}
+
+.final-cta{background:var(--surface);border-top:1px solid var(--border);text-align:center;padding:80px 5%}
+.cta-inner{max-width:620px;margin:0 auto}
+.scarcity{display:inline-flex;align-items:center;gap:8px;background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.25);color:var(--accent3);padding:6px 16px;border-radius:100px;font-size:13px;font-weight:500;margin-bottom:24px}
+.final-cta h2{font-size:clamp(28px,4vw,48px);letter-spacing:-1.5px;margin-bottom:14px}
+.final-cta p{color:var(--muted);font-size:17px;margin-bottom:8px}
+.final-cta .note{font-size:13px;color:var(--muted);margin-top:16px}
+
+footer{background:var(--bg);border-top:1px solid var(--border);padding:56px 5% 36px}
+.footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:36px}
+.footer-logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:10px}.footer-logo span{color:var(--accent)}
+.footer-desc{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:18px}
+.footer-social{display:flex;gap:8px}
+.social-btn{width:34px;height:34px;border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none;font-size:13px;transition:all .2s}.social-btn:hover{border-color:rgba(0,229,160,0.4);color:var(--accent)}
+.footer-col h4{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:14px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+.footer-col a{color:var(--muted);text-decoration:none;font-size:13px;transition:color .2s}.footer-col a:hover{color:var(--text)}
+.footer-bottom{max-width:1100px;margin:36px auto 0;padding-top:22px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.footer-bottom p{color:var(--muted);font-size:12px}
+
+
+
+.services-bento{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;max-width:1200px;margin:0 auto}
+.svc-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:30px;transition:all .3s;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:10px}
+.svc-card:hover{border-color:rgba(0,229,160,0.3);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.3)}
+.svc-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at top left,rgba(0,229,160,0.05),transparent 60%);opacity:0;transition:opacity .3s}
+.svc-card:hover::before{opacity:1}
+.svc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.svc-badge{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 12px;border-radius:100px;font-family:'Syne',sans-serif}
+.svc-badge.popular{background:rgba(255,107,53,0.15);color:var(--accent3);border:1px solid rgba(255,107,53,0.3)}
+.svc-badge.support{background:rgba(0,136,255,0.12);color:var(--accent2);border:1px solid rgba(0,136,255,0.25)}
+.svc-badge.roi{background:rgba(0,229,160,0.1);color:var(--accent);border:1px solid rgba(0,229,160,0.25)}
+.svc-card h3{font-size:19px;letter-spacing:-0.5px;line-height:1.25}
+.svc-card p{color:var(--muted);font-size:14px;line-height:1.65;flex:1}
+.svc-benefit{background:rgba(0,229,160,0.07);border:1px solid rgba(0,229,160,0.15);border-radius:8px;padding:8px 14px;font-size:13px;color:var(--accent);font-weight:500}
+
+.uc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1200px;margin:0 auto 20px}
+.uc-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:16px;transition:border .3s,transform .3s}
+.uc-card:hover{border-color:rgba(0,229,160,0.3);transform:translateY(-3px)}
+.uc-header{display:flex;align-items:flex-start;gap:14px}
+.uc-emoji{font-size:32px;flex-shrink:0;line-height:1}
+.uc-header h3{font-size:16px;letter-spacing:-0.3px;margin:0}
+.uc-flow{display:flex;flex-direction:column;gap:6px;flex:1}
+.uc-step{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:10px}
+.uc-step strong{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:3px}
+.uc-step p{font-size:13px;color:var(--muted);line-height:1.5;margin:0}
+.uc-step.bad{background:rgba(255,107,53,0.07);border:1px solid rgba(255,107,53,0.15)}
+.uc-step.bad strong{color:var(--accent3)}
+.uc-step.mid{background:rgba(0,136,255,0.07);border:1px solid rgba(0,136,255,0.15)}
+.uc-step.mid strong{color:var(--accent2)}
+.uc-step.good{background:rgba(0,229,160,0.07);border:1px solid rgba(0,229,160,0.2)}
+.uc-step.good strong{color:var(--accent)}
+.uc-step.good p{color:var(--text);font-weight:600;font-size:13px}
+.uc-icon-bad,.uc-icon-mid,.uc-icon-good{font-size:16px;flex-shrink:0;margin-top:1px}
+.uc-arrow{text-align:center;color:var(--border);font-size:18px;line-height:1}
+.uc-cta{display:inline-flex;align-items:center;gap:6px;color:var(--accent);font-size:13px;font-weight:700;text-decoration:none;font-family:'Syne',sans-serif;transition:gap .2s;margin-top:auto}.uc-cta:hover{gap:10px}
+
+
+@media(max-width:1100px){.uc-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){
+  .nav-links{display:none}
+  .sticky-cta{display:block}
+  .hero-inner{grid-template-columns:1fr}
+  .hero-visual{display:none}
+  .bc:nth-child(1),.bc:nth-child(2),.bc:nth-child(3),.bc:nth-child(4){grid-column:span 12}
+  .services-bento{grid-template-columns:1fr}
+  .uc-grid{grid-template-columns:1fr}
+    .footer-inner{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .hero-btns{flex-direction:column}
+  .btn-primary,.btn-secondary{width:100%}
+  .footer-inner{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Cognivex<span> Labs</span></div>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#cases">Demo Cases</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <a href="https://calendly.com/cognivexlabs/15min" target="_blank" class="nav-cta">Book Free Audit</a>
+</nav>
+
+<div class="sticky-cta">
+  <a href="https://calendly.com/cognivexlabs/15min" target="_blank">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Book Free Call — Limited Slots
+  </a>
+</div>
+
+<section class="hero" id="home">
+  <div class="hero-grid"></div><div class="hero-glow"></div><div class="hero-glow2"></div>
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-badge"><span class="dot"></span>AI Systems Live & Running</div>
+      <h1>AI Agents That Automate Your Business —<span class="hl"> Sales, Support, Content</span> & More</h1>
+      <p class="hero-sub">Save 15–30+ hours/week with custom-built AI systems designed for growth. We build it. We manage it. You profit.</p>
+      <div class="hero-btns">
+        <a href="https://calendly.com/cognivexlabs/15min" target="_blank" class="btn-primary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Book Free 15-Min AI Audit
+        </a>
+        <a href="#cases" class="btn-secondary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          View Use Cases
+        </a>
+      </div>
+      <div class="trust-line">
+        <div class="trust-pill"><div class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>Custom-built</div>
+        <div class="trust-pill"><div class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>Fully managed</div>
+        <div class="trust-pill"><div class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>Results-driven</div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hv-title">Live performance dashboard</div>
+      <div class="metric-row">
+        <div class="metric"><div class="metric-val">30h</div><div class="metric-lbl">Saved this week</div></div>
+        <div class="metric"><div class="metric-val">98%</div><div class="metric-lbl">Response rate</div></div>
+      </div>
+      <div class="metric-row">
+        <div class="metric"><div class="metric-val">24/7</div><div class="metric-lbl">Uptime</div></div>
+        <div class="metric"><div class="metric-val">3x</div><div class="metric-lbl">More leads</div></div>
+      </div>
+      <div class="activity">
+        <div class="act-item"><span class="act-dot g"></span>Lead qualified & call booked — just now</div>
+        <div class="act-item"><span class="act-dot b"></span>Support query resolved automatically — 2m ago</div>
+        <div class="act-item"><span class="act-dot o"></span>Follow-up email sent to 14 leads — 5m ago</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<section id="services" style="background:var(--bg)">
+  <div style="max-width:1200px;margin:0 auto">
+    <p class="section-label">What We Build</p>
+    <h2 class="section-title">AI Systems That Replace Manual Work</h2>
+    <p class="section-sub">Not templates. Custom AI agents built for your exact business.</p>
+    <div class="services-bento">
+      <div class="svc-card">
+        <div class="svc-top">
+          <div class="card-icon ci-o" style="font-size:26px;width:52px;height:52px">🤖</div>
+          <span class="svc-badge popular">Most Popular</span>
+        </div>
+        <div class="card-tag">Sales & Lead Gen</div>
+        <h3>Turn Visitors Into Qualified Leads Automatically</h3>
+        <p>AI agents that respond instantly, qualify prospects, and book calls — so you never miss an opportunity.</p>
+        <div class="svc-benefit">👉 More leads, more calls, less manual work</div>
+        
+      </div>
+      <div class="svc-card">
+        <div class="svc-top">
+          <div class="card-icon ci-b" style="font-size:26px;width:52px;height:52px">💬</div>
+          <span class="svc-badge support">24/7 Automation</span>
+        </div>
+        <div class="card-tag">Customer Support</div>
+        <h3>Handle Customer Queries 24/7 Without a Team</h3>
+        <p>Automate responses, FAQs, and support conversations with AI that works round the clock.</p>
+        <div class="svc-benefit">👉 Faster support, lower costs</div>
+        
+      </div>
+      <div class="svc-card">
+        <div class="svc-top">
+          <div class="card-icon ci-g" style="font-size:26px;width:52px;height:52px">🏢</div>
+        </div>
+        <div class="card-tag">Industry-Specific</div>
+        <h3>AI Systems Built for Your Industry</h3>
+        <p>Custom workflows tailored for your business — Healthcare: appointment booking &amp; intake · Legal/Finance: document review &amp; summaries · Real Estate: listings &amp; lead nurturing.</p>
+        <div class="svc-benefit">👉 Tailored automation that fits your exact needs</div>
+        <a href="#cases" class="card-link">Explore Use Cases →</a>
+      </div>
+      <div class="svc-card">
+        <div class="svc-top">
+          <div class="card-icon ci-p" style="font-size:26px;width:52px;height:52px">⚙️</div>
+          <span class="svc-badge roi">High ROI</span>
+        </div>
+        <div class="card-tag">Custom Systems</div>
+        <h3>Fully Customized AI Agents for Your Workflow</h3>
+        <p>We design end-to-end automation systems that integrate with your tools and handle complex operations.</p>
+        <div class="svc-benefit">👉 Complete business automation</div>
+        <a href="https://calendly.com/cognivexlabs/15min" target="_blank" class="card-link">Get Custom Plan →</a>
+      </div>
+    </div>
+    <p style="text-align:center;color:var(--muted);font-size:14px;margin-top:28px;font-style:italic">Every system is custom-built and managed based on your business needs.</p>
+  </div>
+</section>
+
+
+
+<section id="how" style="background:var(--bg)">
+  <div style="max-width:1100px;margin:0 auto">
+    <p class="section-label">The Process</p>
+    <h2 class="section-title">From Zero to Automated in 4 Steps</h2>
+    <p class="section-sub">No tech knowledge needed. We handle everything end-to-end.</p>
+    <div class="steps">
+      <div class="step"><div class="step-num">01</div><div class="step-icon">📞</div><h3>Book Free Audit</h3><p>15-min call to identify your biggest automation opportunities.</p></div>
+      <div class="step"><div class="step-num">02</div><div class="step-icon">🗺️</div><h3>Demo + Strategy</h3><p>Live demo tailored to your business + your custom AI roadmap.</p></div>
+      <div class="step"><div class="step-num">03</div><div class="step-icon">🔨</div><h3>We Build Your Agent</h3><p>Custom-built and deployed typically within 7–14 days.</p></div>
+      <div class="step"><div class="step-num">04</div><div class="step-icon">📈</div><h3>We Manage & Optimize</h3><p>We monitor and improve your AI so it keeps performing.</p></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)" id="roi">
+  <div style="max-width:1100px;margin:0 auto">
+    <p class="section-label">Return on Investment</p>
+    <h2 class="section-title">Measurable Business Impact</h2>
+    <p class="section-sub">Our AI automation solutions deliver results from day one.</p>
+    <div class="roi-cards">
+      <div class="roi-card"><div class="roi-icon">💰</div><h3>Reduce Costs</h3><p>Automate repetitive tasks. Reduce dependency on large teams. Save operational expenses.</p></div>
+      <div class="roi-card"><div class="roi-icon">⚡</div><h3>Increase Efficiency</h3><p>Complete tasks faster with consistent accuracy. Improve overall productivity.</p></div>
+      <div class="roi-card"><div class="roi-icon">📊</div><h3>Boost Conversions</h3><p>Engage leads instantly and follow up automatically. Increase conversion rates and revenue.</p></div>
+      <div class="roi-card"><div class="roi-icon">🕒</div><h3>24/7 Availability</h3><p>Never miss an opportunity — your AI agent works round the clock without breaks.</p></div>
+      <div class="roi-card"><div class="roi-icon">📈</div><h3>Scalable Growth</h3><p>Easily scale operations without increasing overhead. Grow faster without hiring.</p></div>
+    </div>
+    <div class="roi-quote">"Most clients recover their full investment within weeks — not months."</div>
+  </div>
+</section>
+
+<section id="cases" style="background:var(--bg)">
+  <div style="max-width:1200px;margin:0 auto">
+    <p class="section-label">Use Cases</p>
+    <h2 class="section-title">AI That Works for <em style="color:var(--accent);font-style:normal">Your</em> Industry</h2>
+    <p class="section-sub">See how businesses like yours are using AI to save time, close more deals, and grow faster.</p>
+
+    <div class="uc-grid">
+
+      <!-- Real Estate -->
+      <div class="uc-card">
+        <div class="uc-header">
+          <span class="uc-emoji">🏡</span>
+          <div>
+            <div class="case-tag" style="margin-bottom:4px">Real Estate</div>
+            <h3>AI for Real Estate Agents</h3>
+          </div>
+        </div>
+        <div class="uc-flow">
+          <div class="uc-step bad"><span class="uc-icon-bad">❌</span><div><strong>Problem</strong><p>Leads not responding — manual follow-ups slip through the cracks</p></div></div>
+          <div class="uc-arrow">↓</div>
+          <div class="uc-step mid"><span class="uc-icon-mid">🤖</span><div><strong>AI Solution</strong><p>AI captures website leads, sends instant follow-up messages, and books property viewing calls</p></div></div>
+          <div class="uc-arrow">↓</div>
+          <div class="uc-step good"><span class="uc-icon-good">📈</span><div><strong>Result</strong><p>+35% more booked calls · Zero missed leads · 15+ hrs/week saved</p></div></div>
+        </div>
+        <a href="https://calendly.com/cognivexlabs/15min" target="_blank" class="uc-cta">Get Custom Plan →</a>
+      </div>
+
+      <!-- Coaches / Consultants -->
+      <div class="uc-card">
+        <div class="uc-header">
+          <span class="uc-emoji">🎯</span>
+          <div>
+            <div class="case-tag" style="margin-bottom:4px">Coaches & Consultants</div>
+            <h3>AI for Coaches & Consultants</h3>
+          </div>
+        </div>
+        <div class="uc-flow">
+          <div class="uc-step bad"><span class="uc-icon-bad">❌</span><div><strong>Problem</strong><p>Spending hours on DMs and discovery calls that don't convert</p></div></div>
+          <div class="uc-arrow">↓</div>
+          <div class="uc-step mid"><span class="uc-icon-mid">🤖</span><div><strong>AI Solution</strong><p>AI qualifies leads via DM automation, filters serious buyers, and books discovery calls automatically</p></div></div>
+          <div class="uc-arrow">↓</div>
+          <div class="uc-step good"><span class="uc-icon-good">📈</span><div><strong>Result</strong><p>+40% more booked calls · 3x faster response · Only speak to qualified prospects</p></div></div>
+        </div>
+        <a href="https://calendly.com/cognivexlabs/15min" target="_blank" class="uc-cta">Get Custom Plan →</a>
+      </div>
+
+      <!-- E-Commerce -->
+      <div class="uc-card">
+        <div class="uc-header">
+          <span class="uc-emoji">🛒</span>
+          <div>
+            <div class="case-tag" style="margin-bottom:4px">E-Commerce</div>
+            <h3>AI for E-Commerce Brands</h3>
+          </div>
+        </div>
+        <div class="uc-flow">
+          <div class="uc-step bad"><span class="uc-icon-bad">❌</span><div><strong>Problem</strong><p>Slow support response losing customers + manual order tracking flooding inbox</p></div></div>
+          <div class="uc-arrow">↓</div>
+          <div class="uc-step mid"><span class="uc-icon-mid">🤖</span><div><strong>AI Solution</strong><p>24/7 support bot handles FAQs, order tracking is fully automated, upsell sequences run on autopilot</p></div></div>
+          <div class="uc-arrow">↓</div>
+          <div class="uc-step good"><span class="uc-icon-good">📈</span><div><strong>Result</strong><p>80% fewer support tickets · 2x upsell revenue · 20+ hrs/week saved</p></div></div>
+        </div>
+        <a href="https://calendly.com/cognivexlabs/15min" target="_blank" class="uc-cta">Get Custom Plan →</a>
+      </div>
+
+      <!-- Agencies -->
+      <div class="uc-card">
+        <div class="uc-header">
+          <span class="uc-emoji">🏢</span>
+          <div>
+            <div class="case-tag" style="margin-bottom:4px">Agencies</div>
+            <h3>AI for Marketing Agencies</h3>
+          </div>
+        </div>
+        <div class="uc-flow">
+          <div class="uc-step bad"><span class="uc-icon-bad">❌</span><div><strong>Problem</strong><p>Manual lead scraping, cold outreach not scaling, CRM updates taking hours</p></div></div>
+          <div class="uc-arrow">↓</div>
+          <div class="uc-step mid"><span class="uc-icon-mid">🤖</span><div><strong>AI Solution</strong><p>AI scrapes leads, runs personalised cold outreach campaigns, and syncs everything to CRM automatically</p></div></div>
+          <div class="uc-arrow">↓</div>
+          <div class="uc-step good"><span class="uc-icon-good">📈</span><div><strong>Result</strong><p>5x more outreach at 1/10th the cost · CRM always up-to-date · 30+ hrs/week saved</p></div></div>
+        </div>
+        <a href="https://calendly.com/cognivexlabs/15min" target="_blank" class="uc-cta">Get Custom Plan →</a>
+      </div>
+
+      <!-- Healthcare -->
+      <div class="uc-card">
+        <div class="uc-header">
+          <span class="uc-emoji">🏥</span>
+          <div>
+            <div class="case-tag" style="margin-bottom:4px">Healthcare</div>
+            <h3>AI for Healthcare Clinics</h3>
+          </div>
+        </div>
+        <div class="uc-flow">
+          <div class="uc-step bad"><span class="uc-icon-bad">❌</span><div><strong>Problem</strong><p>Overwhelmed front desk, manual appointment booking errors, slow patient intake</p></div></div>
+          <div class="uc-arrow">↓</div>
+          <div class="uc-step mid"><span class="uc-icon-mid">🤖</span><div><strong>AI Solution</strong><p>AI books appointments 24/7, collects structured patient intake data, and sends automated reminders</p></div></div>
+          <div class="uc-arrow">↓</div>
+          <div class="uc-step good"><span class="uc-icon-good">📈</span><div><strong>Result</strong><p>60% fewer no-shows · Zero intake errors · Staff freed for high-value care</p></div></div>
+        </div>
+        <a href="https://calendly.com/cognivexlabs/15min" target="_blank" class="uc-cta">Get Custom Plan →</a>
+      </div>
+
+      <!-- Legal / Finance -->
+      <div class="uc-card">
+        <div class="uc-header">
+          <span class="uc-emoji">📄</span>
+          <div>
+            <div class="case-tag" style="margin-bottom:4px">Legal & Finance</div>
+            <h3>AI for Legal & Finance Firms</h3>
+          </div>
+        </div>
+        <div class="uc-flow">
+          <div class="uc-step bad"><span class="uc-icon-bad">❌</span><div><strong>Problem</strong><p>Hours spent reviewing contracts and documents — slowing down decisions</p></div></div>
+          <div class="uc-arrow">↓</div>
+          <div class="uc-step mid"><span class="uc-icon-mid">🤖</span><div><strong>AI Solution</strong><p>AI reviews documents, extracts key clauses, and delivers structured summaries in minutes</p></div></div>
+          <div class="uc-arrow">↓</div>
+          <div class="uc-step good"><span class="uc-icon-good">📈</span><div><strong>Result</strong><p>10x faster document review · 25+ hrs/week saved · Faster client decisions</p></div></div>
+        </div>
+        <a href="https://calendly.com/cognivexlabs/15min" target="_blank" class="uc-cta">Get Custom Plan →</a>
+      </div>
+
+    </div>
+
+    <div class="cases-note" style="margin-top:32px">"These are real working AI systems we've designed — each customized based on your exact business needs."</div>
+
+
+
+  </div>
+</section>
+
+<section style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div style="max-width:1100px;margin:0 auto">
+    <p class="section-label">Why Us</p>
+    <h2 class="section-title">We're Different. Here's How.</h2>
+    <p class="section-sub">Anyone can build a bot. We build AI systems that move your business forward.</p>
+    <div class="why-grid">
+      <div class="why-card"><div class="why-icon">🛠️</div><h3>We Build AND Manage</h3><p>We don't hand you a tool and disappear. We run your AI systems on an ongoing basis so they keep performing.</p></div>
+      <div class="why-card"><div class="why-icon">🎯</div><h3>100% Custom Solutions</h3><p>No templates. No copy-paste. Every system is designed for your business, clients, and goals.</p></div>
+      <div class="why-card"><div class="why-icon">⚡</div><h3>Fast Deployment</h3><p>Most AI agents are live within 7–14 days. You start saving time almost immediately.</p></div>
+      <div class="why-card"><div class="why-icon">📊</div><h3>ROI-First Approach</h3><p>Every decision is measured against one thing: does it save you time or make you more money?</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq" style="background:var(--bg)">
+  <div style="max-width:1100px;margin:0 auto">
+    <p class="section-label">FAQ</p>
+    <h2 class="section-title">Questions Answered</h2>
+    <p class="section-sub" style="margin-bottom:36px">Everything you need to know before getting started.</p>
+    <div class="faq-list">
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Do you offer strategy calls?<div class="faq-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div></div><div class="faq-a"><p>Yes. We offer a free 15-minute AI Audit for anyone curious. For businesses ready to go deeper, paid advanced strategy sessions are available — we map out your full AI roadmap and identify your highest ROI opportunities.</p></div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">How long does it take to build my AI agent?<div class="faq-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div></div><div class="faq-a"><p>Most custom AI agents are built and deployed within 7–14 days. More complex multi-system automations may take 3–4 weeks. After your free audit, we'll give you an exact timeline.</p></div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What is the pricing range?<div class="faq-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div></div><div class="faq-a"><p>Pricing depends on the complexity of your automation. Simple single-agent setups start from a few hundred dollars. Full custom multi-system automations are priced based on your needs. Book a free audit for a clear quote — no hidden fees.</p></div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">Do I need any technical knowledge?<div class="faq-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div></div><div class="faq-a"><p>Zero. We handle everything — building, testing, deploying, and managing. You just tell us what you want automated and we take care of the rest.</p></div></div>
+      <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)">What if I'm not happy with the result?<div class="faq-arrow"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div></div><div class="faq-a"><p>We iterate until it works the way you need it to. We don't consider a project done until you're getting real results. We manage ongoing, so we're always accountable to your outcomes.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta" id="cta">
+  <div class="cta-inner">
+    <div class="scarcity"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Only limited slots available this month</div>
+    <h2>Ready to Automate Your Biggest Bottleneck?</h2>
+    <p>Free AI Workflow Audit + Live Demo — no commitment, no pressure.</p>
+    <p style="color:var(--muted);font-size:16px;margin-bottom:30px">We'll show you exactly what's possible in 15 minutes.</p>
+    <a href="https://calendly.com/cognivexlabs/15min" target="_blank" class="btn-primary" style="font-size:16px;padding:16px 32px;display:inline-flex;margin:0 auto">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Book Call Now — It's Free
+    </a>
+    <p class="note">Advanced strategy sessions available for serious businesses ready to scale fast.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">Cognivex<span> Labs</span></div>
+      <p class="footer-desc">Custom AI agents that automate your sales, support, content, and workflows — built and managed for you.</p>
+      <div class="footer-social">
+        <a href="https://www.linkedin.com/in/aniket-varshney-4967493bb" class="social-btn">in</a>
+        <a href="#" class="social-btn">tw</a>
+        <a href="#" class="social-btn">yt</a>
+        <a href="#" class="social-btn">ig</a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Services</h4><ul><li><a href="#services">Content Automation</a></li><li><a href="#services">Support Agents</a></li><li><a href="#services">Sales Agents</a></li><li><a href="#services">Custom Systems</a></li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a href="#how">How It Works</a></li><li><a href="#cases">Demo Cases</a></li><li><a href="#faq">FAQ</a></li><li><a href="#cta">Book a Call</a></li></ul></div>
+    <div class="footer-col"><h4>Contact</h4><ul><li><a href="mailto:aniiketvarshney@gmail.com">aniiketvarshney@gmail.com</a></li><li><a href="https://www.linkedin.com/in/aniket-varshney-4967493bb" target="_blank">LinkedIn</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Cognivex Labs. All rights reserved.</p>
+    <p>Built with AI. Managed by humans. Results for you.</p>
+  </div>
+</footer>
+
+
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></scr
